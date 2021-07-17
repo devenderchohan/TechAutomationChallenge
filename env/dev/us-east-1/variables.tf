@@ -73,13 +73,12 @@ variable "username" {
 variable "password" {
   description = "DB password"
   type        = string
-  sensitive   = true
   default     = "postgresPwd123"
 }
 variable "port" {
   type        = number
   description = "the default port of postgres"
-  default = 5432
+  default     = 5432
 }
 
 variable "allocated_storage" {

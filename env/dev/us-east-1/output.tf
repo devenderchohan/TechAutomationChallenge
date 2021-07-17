@@ -14,5 +14,5 @@ output "rds_user" {
 
 output "rds_password" {
   sensitive = true
-  value = aws_db_instance.data.password
+  value     = aws_db_instance.data.password
 }

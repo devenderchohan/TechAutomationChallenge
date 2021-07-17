@@ -27,7 +27,16 @@ resource "aws_security_group" "custom-sg" {
     to_port     = 22
     protocol    = "tcp"
     // the cidr blocks can be modified to include custom cidr ranges only for security purpose.
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+  ingress {
+    description = "Allow http Access"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    // the cidr blocks can be modified to include custom cidr ranges only for security purpose.
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
@@ -37,7 +46,7 @@ resource "aws_security_group" "custom-sg" {
     to_port     = var.port
     protocol    = "tcp"
     // the cidr blocks can be modified to include custom cidr ranges only for security purpose.
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
@@ -58,9 +67,15 @@ resource "aws_instance" "instance" {
   ami           = var.ami
   instance_type = var.instance-type
   #installs the docker, docker compose in the instance on start up.
-  user_data = file("../ubuntu-docker.sh")
+  user_data = templatefile("../ubuntu-docker.sh", {
+    username = var.username,
+    password = var.password,
+    name     = var.name,
+    port     = var.port,
+    host     = replace(aws_db_instance.data.endpoint, ":5432", "")
+  })
   vpc_security_group_ids = [aws_security_group.custom-sg.id]
-  key_name  = var.key_name
+  key_name               = var.key_name
   tags = {
     Name       = var.instance-name
     Created-By = "Terraform-automation"
@@ -74,11 +89,11 @@ resource "aws_db_instance" "data" {
   engine               = var.engine
   engine_version       = var.engine_version
   instance_class       = var.instance_class
-  publicly_accessible = true
+  publicly_accessible  = true
   name                 = var.name
   username             = var.username
   password             = var.password
-  identifier = "app-postgres-db"
+  identifier           = "app-postgres-db"
   skip_final_snapshot  = true
   port                 = 5432
   db_subnet_group_name = aws_db_subnet_group.rds_subnet_group.name
