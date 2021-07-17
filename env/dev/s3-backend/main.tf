@@ -1,6 +1,6 @@
 locals {
-  bucketName            = "TechAutomationChallenge-s3-terraform-remote-state"
-  lockTableName         = "TechAutomationChallenge-dynamodb-terraform-remote-state-lock"
+  bucketName    = "techautomationchallenge-s3-terraform-remote-state"
+  lockTableName = "techautomationchallenge-dynamodb-terraform-remote-state-lock"
 }
 
 #create a s3 resource for the provided aws region to store the state file.
@@ -30,9 +30,9 @@ resource "aws_s3_bucket" "terraform_tfstate_bucket" {
 
 }
 resource "aws_s3_bucket_public_access_block" "source" {
-  bucket = aws_s3_bucket.terraform_tfstate_bucket.id
-  block_public_acls   = true
-  block_public_policy = true
+  bucket                  = aws_s3_bucket.terraform_tfstate_bucket.id
+  block_public_acls       = true
+  block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
